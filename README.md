@@ -3,3 +3,10 @@ I am going to put my notes and interesting things related to self-hosting AI sol
 
 # Hardware
 My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10)
+
+# Tips&Tricks
+## allow copy-paste with no garbage
+±±±bash
+echo "printf '\e[?2004l'" >> ~/.bashrc
+source ~/.bashrc
+±±±
