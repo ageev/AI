@@ -6,7 +6,7 @@ My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark G
 
 # Tips&Tricks
 ## allow copy-paste with no garbage
-±±±bash
+```bash
 echo "printf '\e[?2004l'" >> ~/.bashrc
 source ~/.bashrc
-±±±
+```
