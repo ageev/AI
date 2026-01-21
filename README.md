@@ -11,6 +11,4 @@ echo "printf '\e[?2004l'" >> ~/.bashrc
 source ~/.bashrc
 ```
 ## Favorite packets
-<pre><code class="bash">
-sudo apt install nvtop # shows CPU/GPU resources
-</code></pre>
+    sudo apt install nvtop # shows CPU/GPU resources
