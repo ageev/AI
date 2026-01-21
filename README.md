@@ -10,3 +10,7 @@ My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark G
 echo "printf '\e[?2004l'" >> ~/.bashrc
 source ~/.bashrc
 ```
+## Favorite packets
+<pre><code class="language-bash">
+sudo apt install nvtop # shows CPU/GPU resources
+</code></pre>
