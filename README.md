@@ -10,5 +10,8 @@ My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark G
 echo "printf '\e[?2004l'" >> ~/.bashrc
 source ~/.bashrc
 ```
+## mount NFS folder on NAS drive
+    echo '10.0.0.2:/volume2/media	/mnt/nas/media	nfs	rw,_netdev,vers=3,noatime 0 0' | sudo tee -a /etc/fstab
+
 ## Favorite packets
     sudo apt install nvtop # shows CPU/GPU resources
