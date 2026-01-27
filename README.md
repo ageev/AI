@@ -15,3 +15,4 @@ source ~/.bashrc
 
 ## Favorite packets
     sudo apt install nvtop # shows CPU/GPU resources
+    sudo apt install btop # no GPU load there, but still cool
