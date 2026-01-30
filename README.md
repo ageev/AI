@@ -5,9 +5,9 @@ I am going to put my notes and interesting things related to self-hosting AI sol
 My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10)
 
 # Tips&Tricks
-## allow copy-paste with no garbage
 ```bash
-echo "printf '\e[?2004l'" >> ~/.bashrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+echo "printf '\e[?2004l'" >> ~/.bashrc  #fix arrows in the terminal
 source ~/.bashrc
 ```
 ## mount NFS folder on NAS drive
