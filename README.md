@@ -19,4 +19,4 @@ source ~/.bashrc
 
 ## flash FW
 Reboot into BIOS
-   sudo systemctl reboot --firmware-setup
+    sudo systemctl reboot --firmware-setup
