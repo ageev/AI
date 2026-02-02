@@ -14,10 +14,8 @@ source ~/.bashrc
     echo '10.0.0.2:/volume2/media	/mnt/nas/media	nfs	rw,_netdev,vers=3,noatime,x-systemd.automount 0 0' | sudo tee -a /etc/fstab
 
 ## Favorite packets
-    sudo apt install nvtop # shows CPU/GPU resources
-    sudo apt install btop # no GPU load there, but still cool
-    sudo apt install ncdu
-
+    sudo apt install nvtop, btop, tree, ncdu 
+    
 ## flash FW
 Reboot into BIOS
 
