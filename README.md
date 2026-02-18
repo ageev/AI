@@ -2,7 +2,10 @@
 I am going to put my notes and interesting things related to self-hosting AI solutions. 
 
 # Hardware
-My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10)
+My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10). It is 1k cheaper than Spark, has no vapor chamber and 1TB drive only.
+I may update to 4TB later when Samsung PM9E1 will be generally available. 
+
+I use Gl.Inet [Comet PoE](https://www.gl-inet.com/products/gl-rm1pe/?utm_source=website&utm_medium=menubar) as remote KVM. 
 
 # Tips&Tricks
 ```bash
@@ -25,12 +28,12 @@ Reboot into BIOS
 ## LLMs
 Best models so far:
 
-1. *[vLLM](https://github.com/eugr/spark-vllm-docker)*: Abliterated GPT-OSS-120b (1)[https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated], (2)[https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4]
+1. *[vLLM](https://github.com/eugr/spark-vllm-docker)*: Abliterated GPT-OSS-120b [1](https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated), [2](https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4)
    - abliterated
    - fast on vLLM with full context (131k)
    - gives detailed answers, similar to GPT4
 
-2. *LM Studio*: (qwen3-vl)[https://huggingface.co/huihui-ai/Huihui-Qwen3-VL-30B-A3B-Instruct-abliterated]
+2. *LM Studio*: [qwen3-vl](https://huggingface.co/huihui-ai/Huihui-Qwen3-VL-30B-A3B-Instruct-abliterated)
    - fast
    - not chatty -> good for MCPs and agentic use
    - works with pictures
