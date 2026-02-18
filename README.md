@@ -17,7 +17,7 @@ source ~/.bashrc
     echo '10.0.0.2:/volume2/media	/mnt/nas/media	nfs	rw,_netdev,vers=3,noatime,x-systemd.automount 0 0' | sudo tee -a /etc/fstab
 
 ## Packets I cant live without
-    sudo apt install nvtop btop tree ncdu 
+    sudo apt install nvtop btop tree ncdu duf uv
     
 ## flash FW
 Reboot into BIOS
