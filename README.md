@@ -42,3 +42,4 @@ Best models so far:
 - Nvidia forum https://forums.developer.nvidia.com/c/accelerated-computing/dgx-spark-gb10/dgx-spark-gb10/721
 - Reddit's localLLM community https://www.reddit.com/r/LocalLLM/ https://www.reddit.com/r/LocalLLaMA/
 - Nice youtube videos https://www.youtube.com/channel/UCajiMK_CY9icRhLepS8_3ug
+- Spark models benchmarks https://spark-arena.com/leaderboard
