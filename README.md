@@ -45,6 +45,12 @@ Best models so far:
    - not chatty -> good for MCPs and agentic use
    - works with pictures
 
+Interesting models:
+
+- [Dark Desires](https://huggingface.co/ReadyArt/Dark-Desires-12B-v1.5-GGUF)
+- [CWC](https://huggingface.co/CWClabs/CWC-Mistral-Nemo-12B-V2-q4_k_m)
+   - interesting medical model which provides *alternative view* on the pharma industry (e.g., a lot of argumented critics for different Big Pharma products. 
+
 # Links
 - Nvidia forum https://forums.developer.nvidia.com/c/accelerated-computing/dgx-spark-gb10/dgx-spark-gb10/721
 - Reddit's localLLM community https://www.reddit.com/r/LocalLLM/ https://www.reddit.com/r/LocalLLaMA/
