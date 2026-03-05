@@ -47,7 +47,7 @@ Best models so far:
 
 Interesting models:
 
-- [Dark Desires](https://huggingface.co/ReadyArt/Dark-Desires-12B-v1.5-GGUF)
+- [Dark Desires](https://huggingface.co/ReadyArt/Dark-Desires-12B-v1.0-GGUF)
 - [CWC](https://huggingface.co/CWClabs/CWC-Mistral-Nemo-12B-V2-q4_k_m)
    - interesting medical model which provides *alternative view* on the pharma industry (e.g., a lot of argumented critics for different Big Pharma products. 
 
