@@ -19,11 +19,18 @@ source ~/.bashrc
 ## Packets I cant live without
     sudo apt install nvtop btop tree ncdu duf uv
     
-## flash FW
+## FW
 Reboot into BIOS
 
     sudo systemctl reboot --firmware-setup
 
+Get FW updates
+
+    sudo fwupdmgr get-devices
+    sudo fwupdmgr refresh
+    sudo fwupdmgr get-updates
+    sudo fwupdmgr update # this updates the firmware
+    sudo fwupdmgr get-history
 
 # LLMs
 Best models so far:
