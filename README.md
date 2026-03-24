@@ -5,7 +5,78 @@ I am going to put my notes and interesting things related to self-hosting AI sol
 My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10). It is 1k cheaper than Spark, has no vapor chamber and 1TB drive only.
 I may update to 4TB later when Samsung PM9E1 will be generally available. 
 
+
+## Comet KVM + DGX Spark: HDMI "No Signal" Fix
 I use Gl.Inet [Comet PoE](https://www.gl-inet.com/products/gl-rm1pe/?utm_source=website&utm_medium=menubar) as remote KVM. 
+The DGX Spark has a known bug where the NVIDIA GH100 display engine enters a bad state after DPMS (Display Power Management Signaling) puts the display to sleep. The GPU registers start returning `0xbadf5600` errors, Xorg loses the display, and HDMI output dies. The Comet then correctly reports "No HDMI signal detected". 
+Same story if your screen doesn't want to wake up with Spark. 
+
+**Diagnosis (on Comet via SSH):**
+```bash
+ssh root@<comet-ip>  # password = admin password from web UI
+dmesg | grep 6911
+# "check chipid ok" = hardware is fine
+# "0xD211 is 0" = no HDMI signal from source
+# "unsupported resolution" = source outputs a resolution the LT6911C chip rejects
+```
+
+**Diagnosis (on Spark via SSH):**
+```bash
+sudo dmesg | tail -30
+# Look for: NVRM: gpuHandleSanityCheckRegReadError_GH100: Possible bad register read: regvalue: 0xbadf5600
+# This confirms the GPU display engine is in a bad state
+```
+
+**Fix — disable ALL display power management layers on the Spark:**
+
+1. GNOME GUI: Settings → Power → Screen Blank → "Never"; Settings → Privacy & Security → Screen Lock → disable
+2. gsettings:
+```bash
+gsettings set org.gnome.desktop.session idle-delay 0
+gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+```
+3. Disable DPMS at Xorg level:
+```bash
+sudo mkdir -p /etc/X11/xorg.conf.d
+sudo tee /etc/X11/xorg.conf.d/90-disable-dpms.conf << EOF
+Section "Extensions"
+    Option "DPMS" "Disable"
+EndSection
+
+Section "ServerFlags"
+    Option "StandbyTime" "0"
+    Option "SuspendTime" "0"
+    Option "OffTime" "0"
+    Option "BlankTime" "0"
+EndSection
+EOF
+```
+4. Persist xset at login:
+```bash
+mkdir -p ~/.config/autostart
+cat > ~/.config/autostart/disable-dpms.desktop << EOF
+[Desktop Entry]
+Type=Application
+Name=Disable DPMS
+Exec=bash -c "xset s off -dpms && xset dpms 0 0 0"
+X-GNOME-Autostart-enabled=true
+EOF
+```
+5. systemd-logind — edit `/etc/systemd/logind.conf`:
+```
+IdleAction=ignore
+IdleActionSec=infinity
+```
+6. ```sudo reboot```
+
+**Verify:**
+```bash
+export DISPLAY=:0
+export XAUTHORITY=/run/user/1000/gdm/Xauthority
+xset q | grep -A 5 "DPMS"
+# Should show: "DPMS is Disabled"
+```
 
 # Tips&Tricks
 ```bash
