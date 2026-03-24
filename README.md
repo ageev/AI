@@ -110,8 +110,9 @@ Best models so far:
    - abliterated
    - fast on vLLM with full context (131k)
    - gives detailed answers, similar to GPT4
+2. https://github.com/adadrag/qwen3.5-dgx-spark
 
-2. *LM Studio*: [qwen3-vl](https://huggingface.co/huihui-ai/Huihui-Qwen3-VL-30B-A3B-Instruct-abliterated)
+3. *LM Studio*: [qwen3-vl](https://huggingface.co/huihui-ai/Huihui-Qwen3-VL-30B-A3B-Instruct-abliterated)
    - fast
    - not chatty -> good for MCPs and agentic use
    - works with pictures
