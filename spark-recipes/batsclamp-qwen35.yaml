@@ -1,0 +1,41 @@
+recipe_version: '1'
+name: Huihui-Qwen3.5-35B-A3B-Claude-4.6-Opus-abliterated-FP8
+description: vLLM serving batsclamp/Huihui-Qwen3.5-35B-A3B-Claude-4.6-Opus-abliterated-FP8
+model: batsclamp/Huihui-Qwen3.5-35B-A3B-Claude-4.6-Opus-abliterated-FP8
+container: vllm-node-tf5
+solo_only: true
+build_args:
+  - "--tf5"
+mods:
+  - mods/fix-qwen3.5-chat-template
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  tensor_parallel: 1
+  gpu_memory_utilization: 0.5
+  max_model_len: 262144
+  max_num_batched_tokens: 32768
+  served-model-name: Qwen/Qwen3.5-35B-A3B-FP8-Vision
+
+env:
+  VLLM_MARLIN_USE_ATOMIC_ADD: 1
+#  HF_HUB_OFFLINE: 1
+#  TRANSFORMERS_OFFLINE: 1
+
+command: |
+  vllm serve batsclamp/Huihui-Qwen3.5-35B-A3B-Claude-4.6-Opus-abliterated-FP8 \
+    --served-model-name {served-model-name} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    -tp {tensor_parallel} \
+    --host {host} \
+    --port {port} \
+    --max-model-len {max_model_len} \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --reasoning-parser qwen3 \
+    --tool-call-parser qwen3_coder \
+    --chat-template unsloth.jinja \
+    --enable-auto-tool-choice \
+    --enable-prefix-caching \
+    --trust-remote-code \
+    --load-format fastsafetensors \
+    --attention-backend flashinfer
