@@ -4,6 +4,16 @@ Comparison of six vision-capable Qwen3.6-27B variants running on a single ASUS A
 
 Published 2026-05-08.
 
+## Operator's pick
+
+I prefer abliterated models for my own use case. With that preference, my pick is **[`sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP`](https://huggingface.co/sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP) with DFlash k=10**:
+
+- ~7% faster than the methodology-ranked winner (46.0 vs 42.85 mean eff t/s)
+- 86% tool-eval quality (vs unsloth's 91%) — the gap is three additional scenario failures, mostly in multi-step tool-chaining and edge-case search/database refusal (TC-25, TC-33, TC-43)
+- Same single critical safety-failure surface as the unsloth winner (TC-60 Cross-Turn Sleeper Injection — a base-Qwen3.6 weakness shared by every variant tested; abliteration adds no new attack surface here)
+
+The methodology-ranked winner below remains `unsloth/Qwen3.6-27B-NVFP4`. It is the safer default if you don't specifically want abliteration.
+
 ## TL;DR
 
 | Decision | Pick |
