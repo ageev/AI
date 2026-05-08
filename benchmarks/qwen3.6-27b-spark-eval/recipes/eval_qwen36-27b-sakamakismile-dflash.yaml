@@ -1,0 +1,59 @@
+recipe_version: '1'
+name: eval-Qwen3.6-27B-Huihui-NVFP4-MTP-DFlash
+description: BENCH ONLY - vLLM serving sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP + DFlash drafter k=10 - 16K ctx, no prefix cache, qwen3_xml parser. Cross-model DFlash sweep (option B). Note - model name has "MTP" because the native MTP head is preserved in the checkpoint, but here we deliberately use DFlash (drafter z-lab/Qwen3.6-27B-DFlash) for fair model-vs-model comparison. Abliteration may reduce drafter acceptance.
+model: sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP
+
+container: vllm-node-tf5
+
+solo_only: true
+
+build_args:
+  - --tf5
+
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  tensor_parallel: 1
+  gpu_memory_utilization: 0.85
+  max_model_len: 16384
+  max_num_batched_tokens: 16384
+  max_num_seqs: 3
+  served-model-name: qwen3.6-27b-vision
+  chat_template: /root/.cache/huggingface/templates/qwen3.6/chat_template.jinja
+
+env:
+  VLLM_ALLOW_LONG_MAX_MODEL_LEN: 1
+  PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+  TORCH_MATMUL_PRECISION: high
+  NVIDIA_FORWARD_COMPAT: 1
+  NVIDIA_DISABLE_REQUIRE: 1
+  VLLM_MARLIN_USE_ATOMIC_ADD: 1
+  HF_HUB_OFFLINE: 1
+  TRANSFORMERS_OFFLINE: 1
+
+command: |
+  vllm serve sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP \
+    --served-model-name {served-model-name} \
+    --host {host} --port {port} \
+    -tp {tensor_parallel} \
+    --max-model-len {max_model_len} \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --max-num-seqs {max_num_seqs} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    --dtype auto \
+    --quantization compressed-tensors \
+    --kv-cache-dtype auto \
+    --enable-auto-tool-choice \
+    --reasoning-parser qwen3 \
+    --tool-call-parser qwen3_xml \
+    --chat-template {chat_template} \
+    --enable-chunked-prefill \
+    --no-enable-prefix-caching \
+    --trust-remote-code \
+    --load-format fastsafetensors \
+    --override-generation-config '{{"temperature": 0}}' \
+    --speculative-config '{{"method": "dflash", "model": "z-lab/Qwen3.6-27B-DFlash", "num_speculative_tokens": 10}}' \
+    --attention-backend flash_attn \
+    --limit-mm-per-prompt '{{"image": 4, "video": 2}}' \
+    --mm-encoder-tp-mode data \
+    --mm-processor-cache-type shm
