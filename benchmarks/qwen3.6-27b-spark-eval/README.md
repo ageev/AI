@@ -31,6 +31,7 @@ The methodology-ranked winner below remains `unsloth/Qwen3.6-27B-NVFP4`. It is t
 - **Throughput**: tool-eval-bench `--spec-bench` on the `code` and `structured` prompt sets — these mirror real tool-call / coding workloads. Synthetic continuation throughput (`--perf`) was dropped after preliminary runs showed it measured the thinking phase rather than the output phase, distorting comparisons.
 - **Context**: bench at `max-model-len 16384`. The serving recipes themselves can run up to 262144.
 - **No KV prefix caching during measurement** (`--no-enable-prefix-caching`).
+- **Same chat template across all models.** Every config explicitly passed `--chat-template` pointing at [`froggeric/Qwen-Fixed-Chat-Templates/qwen3.6/chat_template.jinja`](https://huggingface.co/froggeric/Qwen-Fixed-Chat-Templates/blob/main/qwen3.6/chat_template.jinja) (sha256 verified inside the container before each launch). Tool-call quality scores are highly sensitive to chat-template bugs — the original Qwen3 template and the `qwen3_coder` template both have known issues that surface as parser failures, malformed tool-call arguments, or dropped reasoning blocks. Holding the template constant (and using a fixed/known-good one) is what makes cross-model quality comparison meaningful.
 - One model active at a time. Snapshot SHAs and image hash pinned in `results.csv`.
 
 | | |
