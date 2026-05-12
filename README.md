@@ -106,16 +106,12 @@ Get FW updates
 # LLMs
 Best models so far:
 
-1. *[vLLM](https://github.com/eugr/spark-vllm-docker)*: Abliterated GPT-OSS-120b [1](https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated), [2](https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4)
+- Qwen3.6 27b NVFP4 + DFlash
+
+- *[vLLM](https://github.com/eugr/spark-vllm-docker)*: Abliterated GPT-OSS-120b [1](https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated), [2](https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4)
    - abliterated
    - fast on vLLM with full context (131k)
    - gives detailed answers, similar to GPT4
-2. https://github.com/adadrag/qwen3.5-dgx-spark
-
-3. *LM Studio*: [qwen3-vl](https://huggingface.co/huihui-ai/Huihui-Qwen3-VL-30B-A3B-Instruct-abliterated)
-   - fast
-   - not chatty -> good for MCPs and agentic use
-   - works with pictures
 
 Interesting models:
 
