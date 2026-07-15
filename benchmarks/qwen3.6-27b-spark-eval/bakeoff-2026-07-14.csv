@@ -1,0 +1,5 @@
+model,quant,tool_eval_score,tool_eval_points,gsm8k_1024_pct,longctx_9q,safety_warnings,median_answer_s,p90_answer_s,suite_gen_tokens,gsm8k_tokens,think_median_chars,think_max_chars,decode_tps_under_load,suite_wall_min,verdict
+Jackrong/Qwopus3.6-27B-v2-FP8,FP8,88,121/138,90.0,8/9,1 (TC-60),105,130,28930,52887,1664,2502,7.8,34.2,production pick (with fixed template + hermes parser)
+bottlecapai/ThinkingCap-Qwen3.6-27B-FP8,FP8,89,123/138,92.5,8/9,1 (TC-60),74,79,27839,62239,1146,1517,7.8,37.0,won the bench; failed a 2.5h production trial (task repetition; food-log mislogging)
+Qwen/Qwen3.6-27B-FP8,FP8,90,124/138,62.5,8/9,0,155,217,48519,71974,3795,4744,7.7,70.2,smartest on paper; 2x thinking tax; only build to deflect TC-60
+unsloth/Qwen3.6-27B-NVFP4,NVFP4(mixed),88,122/138,72.5,8/9,"2 (TC-42, TC-60)",175,594,67018,72341,5262,19690,10.4,58.0,fastest decode eaten by worst verbosity; out

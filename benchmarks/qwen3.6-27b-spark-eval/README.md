@@ -1,5 +1,16 @@
 # Qwen3.6-27B on GB10: tool-calling benchmark
 
+> ## UPDATE 2026-07-14: agent-conditions re-eval, new production pick
+>
+> Full overnight re-run of four variants under production agent conditions (uncapped output, prod sampling at temp 1.0, contexts up to 245K real tokens, tool-eval-bench v2.0.6 + GSM8K + a custom agent suite, no speculative decoding - MTP crashes the multimodal path on GB10). Everything below this box is the original 2026-05-08 throughput-oriented eval and is superseded for model choice.
+>
+> Headlines - full writeup in [`bakeoff-2026-07-14.md`](bakeoff-2026-07-14.md), data in [`bakeoff-2026-07-14.csv`](bakeoff-2026-07-14.csv):
+>
+> - **Tool quality is a four-way tie** (88-90 of 100); what separates the builds is thinking verbosity: 1.1K-5.3K median CoT chars, 28K-67K tokens for the same work, 74-175 s median answer time.
+> - **[`bottlecapai/ThinkingCap-Qwen3.6-27B-FP8`](https://huggingface.co/bottlecapai/ThinkingCap-Qwen3.6-27B-FP8) won the bench** (fewest tokens, fastest answers, GSM8K 92.5% under budget) - **and then failed a 2.5-hour production trial** (task repetition, food-log mislogging). Bench parity did not survive live multi-turn agent work. Treat single-night benchmarks accordingly.
+> - **Production pick: [`Jackrong/Qwopus3.6-27B-v2-FP8`](https://huggingface.co/Jackrong/Qwopus3.6-27B-v2-FP8)** (Opus-trace distill) **with the author's fixed chat template (commit `2ea14ba`) and `--tool-call-parser hermes`.** The fixed template serializes past tool calls as JSON inside `<tool_call>` and lifted the multi-step-chain subset from 22/32 to 25/32. Template and parser must change together - `qwen3_xml` cannot parse the JSON output format.
+> - The May winner `unsloth/Qwen3.6-27B-NVFP4` is out for agent use: +33% decode speed is eaten by 4.6x longer thinking (median answer 175 s, p90 594 s).
+
 Comparison of six vision-capable Qwen3.6-27B variants running on a single ASUS Aspire GX10 (NVIDIA GB10 platform, 128 GB unified memory) with vLLM. Goal: identify the best model for production tool-calling and coding workloads with thinking enabled.
 
 Published 2026-05-08.
