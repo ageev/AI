@@ -1,31 +1,34 @@
+EN | [RU](README.ru.md)
+
 # About
 My current AI setup:
-- Asus GB10 box as a main LLM carrier
-- Chinese Intel N95 tiny PC where Hermes agent lives
+- Asus GB10 box as the main LLM carrier
+- Chinese Intel N95 tiny PC where the Hermes agent lives
 - Synology NAS as a docker station and storage
 - Macbook as a daily driver
 
-This setup allows me to disable internet for LLM host (Spark). Just in case. 
+This setup allows me to disable internet for the LLM host (Spark). Just in case.
 
 # TL;DR
 1. Claude Code makes local AI shine:
-  - setup and manages the environment: software installs, issue debug etc.
-  - **secrets never leave LAN**: local Vaultwarden has dedicated Organization where bots store their secrets (end never read them into their context!)
-  - writes skills for Hermes agent and helps him when he struggles.
-  - Claude has strict guardrails set to never read anything private/confidential and immediately report in case of incidents (we had a few minor ones. See below)
-2. Local AI *almost* all the time looses to frontier cloud models. Often even the best LLMs fail basic tasks. BUT this scheme, where Claude is the untrusted brain and local LLM is a (dumb) trusted worker surprisingly effective!
-3. Speculative Decoding (MTP, Dflash, etc.) sucks. It helps you boost the TPS (tokens-per-second), works fine with text generation and coding, but completely fails you on many real-life agentic tasks.
-4. Hermes agent works great via Telegram and allows all family members to feel the power of local (trusted) AI.
+  - sets up and manages the environment: software installs, issue debugging etc.
+  - **secrets never leave the LAN**: local Vaultwarden has a dedicated Organization where the bots store their secrets (and Claude never reads them into its context!)
+  - writes skills for the Hermes agent and helps him when he struggles.
+  - Claude has strict guardrails set to never read anything private/confidential and to immediately report incidents (we had a few minor ones - see [PRIVACY.md](PRIVACY.md)).
+2. Local AI *almost* all the time loses to frontier cloud models. Often even the best local LLMs fail basic tasks. BUT this scheme, where Claude is the untrusted brain and the local LLM is a (dumb) trusted worker, is surprisingly effective!
+3. Speculative Decoding (MTP, DFlash, etc.) sucks. It boosts TPS (tokens-per-second) and works fine for plain text generation and coding, but completely fails you on many real-life agentic tasks - see the [failure log](spark/README.md#speculative-decoding-on-gb10-the-failure-log).
+4. The Hermes agent works great via Telegram and lets all family members feel the power of local (trusted) AI.
 
 ## Most used LLM usecases:
-- food calories intake monitoring (I send photo of my lunch to Hermes, he tracks proteins and calories. I see current counters on my Android widget). Result: minus 5 kilos in 2 months!
-- sport activities monitoring. I collect 120+ health/sleep/sport parameters via Garmin watches to my Home Assistant. After an activity is done, I get full report in my Telegram chat. This already have helped me to improme my running significantly! Feels like a private coach.
-- private doctor: Hermes has access to my blood tests, sleep data and DNA. 
+- **food calorie intake monitoring** - I send a photo of my lunch to Hermes, he tracks proteins and calories; I see the current counters on my Android widget. Result: minus 5 kilos in 2 months! Sanitized sources: the skill [`skills/food-log/`](skills/food-log/) and the widget pipeline [`skills/food-widget/`](skills/food-widget/).
+- **sport activities monitoring** - I collect 120+ health/sleep/sport parameters via Garmin watches into my Home Assistant. After an activity is done, I get a full report in my Telegram chat. This has already helped me improve my running significantly! Feels like a private coach.
+- **private doctor** - Hermes has access to my blood tests, sleep data and DNA.
 
 
 # Repo map
 
 - [`spark/`](spark/) - the box itself: hardware, headless setup, swap vs OOM, specdec failure log, KVM/HDMI fix, launch recipes
+- [`skills/`](skills/) - sanitized real skills of the local agent: [`food-log`](skills/food-log/) + the Android [`food-widget`](skills/food-widget/) pipeline
 - [`benchmarks/`](benchmarks/) - model bake-offs run on the Spark
 - [`converters/`](converters/) - quantization helpers
 - [`usecases/`](usecases/) - end-to-end examples (MRI analysis)
