@@ -1,0 +1,35 @@
+# hermes-widgets configuration - EXAMPLE.
+# Real values live only on the agent host. Secrets are referenced by vault
+# item NAME (fetched at runtime via the `secret` CLI); no credential is ever
+# stored in this file or in this repo.
+
+[share]                        # SMB share the rendered PNGs are published to
+host = "nas.lan"
+share = "public"
+site_dir = "www"               # subdirectory the web server serves
+vault_item = "smb-widgets"     # login item: SMB username + password
+
+[publish]
+# Login item whose URI is the capability base URL, e.g.
+#   https://widgets.example.com/hw-<long-random-token>
+# The path token is the ONLY access control: treat the URL itself as a
+# secret - never print it, never link it.
+url_vault_item = "widgets-url"
+
+[render]
+themes = ["dark", "light"]
+
+[render.buckets]               # Android widget size classes, px (example values)
+small = [600, 600]
+wide = [1240, 600]
+large = [1240, 1240]
+
+[slots._default]
+tap_url = "tg://resolve?domain=your_bot_name"   # tap opens the agent chat
+
+[slots.calories_alice]
+budget_kcal = 2000
+tap_url = "tg://resolve?domain=your_bot_name"
+
+[slots.calories_bob]
+budget_kcal = 1800
