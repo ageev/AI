@@ -1,5 +1,27 @@
 # About
-I am going to put my notes and interesting things related to self-hosting AI solutions.
+My current AI setup:
+- Asus GB10 box as a main LLM carrier
+- Chinese Intel N95 tiny PC where Hermes agent lives
+- Synology NAS as a docker station and storage
+- Macbook as a daily driver
+
+This setup allows me to disable internet for LLM host (Spark). Just in case. 
+
+# TL;DR
+1. Claude Code makes local AI shine:
+  - setup and manages the environment: software installs, issue debug etc.
+  - **secrets never leave LAN**: local Vaultwarden has dedicated Organization where bots store their secrets (end never read them into their context!)
+  - writes skills for Hermes agent and helps him when he struggles.
+  - Claude has strict guardrails set to never read anything private/confidential and immediately report in case of incidents (we had a few minor ones. See below)
+2. Local AI *almost* all the time looses to frontier cloud models. Often even the best LLMs fail basic tasks. BUT this scheme, where Claude is the untrusted brain and local LLM is a (dumb) trusted worker surprisingly effective!
+3. Speculative Decoding (MTP, Dflash, etc.) sucks. It helps you boost the TPS (tokens-per-second), works fine with text generation and coding, but completely fails you on many real-life agentic tasks.
+4. Hermes agent works great via Telegram and allows all family members to feel the power of local (trusted) AI.
+
+## Most used LLM usecases:
+- food calories intake monitoring (I send photo of my lunch to Hermes, he tracks proteins and calories. I see current counters on my Android widget). Result: minus 5 kilos in 2 months!
+- sport activities monitoring. I collect 120+ health/sleep/sport parameters via Garmin watches to my Home Assistant. After an activity is done, I get full report in my Telegram chat. This already have helped me to improme my running significantly! Feels like a private coach.
+- private doctor: Hermes has access to my blood tests, sleep data and DNA. 
+
 
 # Repo map
 
