@@ -1,3 +1,5 @@
+EN | [RU](README.ru.md)
+
 # Spark box (GB10)
 
 Everything about the hardware lives here. Model choices and use cases stay in the repo root.

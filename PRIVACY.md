@@ -1,3 +1,5 @@
+EN | [RU](PRIVACY.ru.md)
+
 # Privacy boundaries: cloud architect, local hands
 
 Two AIs with different trust levels run this setup:
