@@ -1,123 +1,50 @@
 # About
-I am going to put my notes and interesting things related to self-hosting AI solutions. 
+I am going to put my notes and interesting things related to self-hosting AI solutions.
+
+# Repo map
+
+- [`spark/`](spark/) - the box itself: hardware, headless setup, swap vs OOM, specdec failure log, KVM/HDMI fix, launch recipes
+- [`benchmarks/`](benchmarks/) - model bake-offs run on the Spark
+- [`converters/`](converters/) - quantization helpers
+- [`usecases/`](usecases/) - end-to-end examples (MRI analysis)
+- [`PRIVACY.md`](PRIVACY.md) - the data boundary between the cloud copilot and the local agent
 
 # Hardware
-My current hardware is Asus Aspire GX10 (almost full clone of Nvidia DGX Spark GB-10). It is 1k cheaper than Spark, has no vapor chamber and 1TB drive only.
-I may update to 4TB later when Samsung PM9E1 will be generally available. 
 
-
-## Comet KVM + DGX Spark: HDMI "No Signal" Fix
-I use Gl.Inet [Comet PoE](https://www.gl-inet.com/products/gl-rm1pe/?utm_source=website&utm_medium=menubar) as remote KVM. 
-The DGX Spark has a known bug where the NVIDIA GH100 display engine enters a bad state after DPMS (Display Power Management Signaling) puts the display to sleep. The GPU registers start returning `0xbadf5600` errors, Xorg loses the display, and HDMI output dies. The Comet then correctly reports "No HDMI signal detected". 
-Same story if your screen doesn't want to wake up with Spark. 
-
-**Diagnosis (on Comet via SSH):**
-```bash
-ssh root@<comet-ip>  # password = admin password from web UI
-dmesg | grep 6911
-# "check chipid ok" = hardware is fine
-# "0xD211 is 0" = no HDMI signal from source
-# "unsupported resolution" = source outputs a resolution the LT6911C chip rejects
-```
-
-**Diagnosis (on Spark via SSH):**
-```bash
-sudo dmesg | tail -30
-# Look for: NVRM: gpuHandleSanityCheckRegReadError_GH100: Possible bad register read: regvalue: 0xbadf5600
-# This confirms the GPU display engine is in a bad state
-```
-
-**Fix — disable ALL display power management layers on the Spark:**
-
-1. GNOME GUI: Settings → Power → Screen Blank → "Never"; Settings → Privacy & Security → Screen Lock → disable
-2. gsettings:
-```bash
-gsettings set org.gnome.desktop.session idle-delay 0
-gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
-gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-```
-3. Disable DPMS at Xorg level:
-```bash
-sudo mkdir -p /etc/X11/xorg.conf.d
-sudo tee /etc/X11/xorg.conf.d/90-disable-dpms.conf << EOF
-Section "Extensions"
-    Option "DPMS" "Disable"
-EndSection
-
-Section "ServerFlags"
-    Option "StandbyTime" "0"
-    Option "SuspendTime" "0"
-    Option "OffTime" "0"
-    Option "BlankTime" "0"
-EndSection
-EOF
-```
-4. Persist xset at login:
-```bash
-mkdir -p ~/.config/autostart
-cat > ~/.config/autostart/disable-dpms.desktop << EOF
-[Desktop Entry]
-Type=Application
-Name=Disable DPMS
-Exec=bash -c "xset s off -dpms && xset dpms 0 0 0"
-X-GNOME-Autostart-enabled=true
-EOF
-```
-5. systemd-logind — edit `/etc/systemd/logind.conf`:
-```
-IdleAction=ignore
-IdleActionSec=infinity
-```
-6. ```sudo reboot```
-
-**Verify:**
-```bash
-export DISPLAY=:0
-export XAUTHORITY=/run/user/1000/gdm/Xauthority
-xset q | grep -A 5 "DPMS"
-# Should show: "DPMS is Disabled"
-```
-
-# Tips&Tricks
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-echo "printf '\e[?2004l'" >> ~/.bashrc  #fix arrows in the terminal
-source ~/.bashrc
-```
-## mount NFS folder on NAS drive
-    echo '10.0.0.2:/volume2/media	/mnt/nas/media	nfs	rw,_netdev,vers=3,noatime,x-systemd.automount 0 0' | sudo tee -a /etc/fstab
-
-## Packets I cant live without
-    sudo apt install nvtop btop tree ncdu duf uv mc
-    
-## FW
-Reboot into BIOS
-
-    sudo systemctl reboot --firmware-setup
-
-Get FW updates
-
-    sudo fwupdmgr get-devices
-    sudo fwupdmgr refresh
-    sudo fwupdmgr get-updates
-    sudo fwupdmgr update # this updates the firmware
-    sudo fwupdmgr get-history
+Asus Aspire GX10 (DGX Spark / GB10 clone), running mostly headless now - details, OOM/swap notes and fixes in [`spark/`](spark/).
 
 # LLMs
-Best models so far:
+
+## Current pick (since 2026-07-18): Step-3.7-Flash
+
+[`stepfun-ai/Step-3.7-Flash`](https://huggingface.co/stepfun-ai/Step-3.7-Flash-GGUF) - 196B MoE, 11B active, native vision. Served as GGUF IQ4_XS (~98 GiB) via llama.cpp in docker: ctx 262144, 2 parallel slots, KV cache q4_0, ~28 tok/s warm decode on the GB10.
+
+Why it won:
+
+- **Vision layers.** The daily agent workload is multimodal; the killer task is food-photo calorie/macro logging, and Step-3.7 reads plates and portions noticeably better than any Qwen3.6-27B variant tried here.
+- **MoE fits the box.** 11B active params on a memory-bandwidth-bound machine decode ~3x faster than a 27B dense, while the 196B total keeps answer quality up.
+- **Benchmarks lied, prod did not.** The bench winner among the 27B candidates failed a 2.5-hour live trial (repeated tasks, mislogged meals). Step-3.7 won on real agent work. Full story in [`benchmarks/`](benchmarks/qwen3.6-27b-spark-eval/).
+
+Tip: keep the served-model-name stable across swaps - proxies and agent configs do not change when the backend model does.
+
+## Plan B: Qwopus
+
+[`Jackrong/Qwopus3.6-27B-v2-FP8`](https://huggingface.co/Jackrong/Qwopus3.6-27B-v2-FP8) (Qwen3.6-27B Opus-trace distill) via [vLLM](https://github.com/eugr/spark-vllm-docker) - the previous production model and the rollback path. Use the author's fixed chat template + `--tool-call-parser hermes`, `--gpu-memory-utilization 0.60`, no specdec (see the [failure log](spark/README.md#speculative-decoding-on-gb10-the-failure-log)).
+
+## Earlier picks
 
 - Qwen3.6 27b NVFP4 + DFlash
+- Abliterated GPT-OSS-120b [1](https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated), [2](https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4) - fast on vLLM with full context (131k), detailed GPT4-like answers
 
-- *[vLLM](https://github.com/eugr/spark-vllm-docker)*: Abliterated GPT-OSS-120b [1](https://huggingface.co/batsclamp/Huihui-gpt-oss-120b-mxfp4-abliterated), [2](https://huggingface.co/justinjja/gpt-oss-120b-Derestricted-MXFP4)
-   - abliterated
-   - fast on vLLM with full context (131k)
-   - gives detailed answers, similar to GPT4
-
-Interesting models:
+## Interesting models
 
 - [Dark Desires](https://huggingface.co/ReadyArt/Dark-Desires-12B-v1.0-GGUF)
 - [CWC](https://huggingface.co/CWClabs/CWC-Mistral-Nemo-12B-V2-q4_k_m)
-   - interesting medical model which provides *alternative view* on the pharma industry (e.g., a lot of argumented critics for different Big Pharma products. 
+   - interesting medical model which provides *alternative view* on the pharma industry (e.g., a lot of argumented critics for different Big Pharma products.
+
+# Privacy boundaries
+
+Two AIs run this setup: a cloud copilot that designs, debugs and teaches, and a local agent that touches the actual data. The rule is asymmetric on purpose: the cloud one never reads secrets, chats, health data or agent memory - it works from structure, counts and statuses only. Full contract and the tooling that enforces it: [`PRIVACY.md`](PRIVACY.md).
 
 # Links
 - Nvidia forum https://forums.developer.nvidia.com/c/accelerated-computing/dgx-spark-gb10/dgx-spark-gb10/721

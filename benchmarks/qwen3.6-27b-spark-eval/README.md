@@ -1,5 +1,7 @@
 # Qwen3.6-27B on GB10: tool-calling benchmark
 
+> **UPDATE 2026-07-18: production moved off Qwen3.6 entirely.** [`stepfun-ai/Step-3.7-Flash`](https://huggingface.co/stepfun-ai/Step-3.7-Flash-GGUF) (196B MoE, 11B active, vision) via llama.cpp now serves prod - decisive edge on real photo tasks, ~28 tok/s vs 8-9 for a 27B dense on the same box. See the [root README](../../README.md). The bake-off below stands as the definitive Qwen3.6-27B comparison; Qwopus is the rollback path.
+
 > ## UPDATE 2026-07-14: agent-conditions re-eval, new production pick
 >
 > Full overnight re-run of four variants under production agent conditions (uncapped output, prod sampling at temp 1.0, contexts up to 245K real tokens, tool-eval-bench v2.0.6 + GSM8K + a custom agent suite, no speculative decoding - MTP crashes the multimodal path on GB10). Everything below this box is the original 2026-05-08 throughput-oriented eval and is superseded for model choice.
