@@ -28,7 +28,7 @@ This setup allows me to disable internet for the LLM host (Spark). Just in case.
 # Repo map
 
 - [`spark/`](spark/) - the box itself: hardware, headless setup, swap vs OOM, specdec failure log, KVM/HDMI fix, launch recipes
-- [`skills/`](skills/) - sanitized real skills of the local agent: [`food-log`](skills/food-log/) + the Android [`food-widget`](skills/food-widget/) pipeline
+- [`skills/`](skills/) - sanitized real skills: the local agent's [`food-log`](skills/food-log/) + the Android [`food-widget`](skills/food-widget/) pipeline, and the cloud copilot's [`confidential-data-handling`](skills/confidential-data-handling/) guardrails
 - [`benchmarks/`](benchmarks/) - model bake-offs run on the Spark
 - [`converters/`](converters/) - quantization helpers
 - [`usecases/`](usecases/) - end-to-end examples (MRI analysis)

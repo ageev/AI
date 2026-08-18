@@ -27,7 +27,7 @@
 # Карта репозитория
 
 - [`spark/`](spark/README.ru.md) - сама коробка: железо, headless-режим, swap против OOM, журнал провалов specdec, фикс KVM/HDMI, рецепты запуска
-- [`skills/`](skills/) - обезличенные боевые скиллы локального агента: [`food-log`](skills/food-log/) + пайплайн Android-виджета [`food-widget`](skills/food-widget/); доки скиллов на английском - это язык рантайма агента
+- [`skills/`](skills/) - обезличенные боевые скиллы: у локального агента [`food-log`](skills/food-log/) + пайплайн Android-виджета [`food-widget`](skills/food-widget/), у облачного копилота [`confidential-data-handling`](skills/confidential-data-handling/) - его же гардрейлы; доки скиллов на английском - это язык рантайма агента
 - [`benchmarks/`](benchmarks/) - бейкоффы моделей на Spark
 - [`converters/`](converters/) - утилиты квантизации
 - [`usecases/`](usecases/) - end-to-end примеры (разбор МРТ)

@@ -27,6 +27,8 @@ The asymmetry is the whole design: **the mentor teaches the agent how to work bu
 5. **Secrets live in a vault.** vaultwarden + `bw serve` + a small `secret` CLI on the agent host; the agent fetches its own credentials at runtime. The copilot handles secret *names*, never values. On the NAS, configs render from an env file into tmpfs, so no plaintext secrets sit in the compose tree either.
 6. **Violations are loud.** Accidentally reading something private is an *incident*: stop immediately, report to the human, no quiet finishing. The rules got their teeth from exactly one such incident - a genomics session leaked three genotype values into cloud context via casual `head`/`awk` peeks. Result: a permanent aggregate-only rule for genotype files and the incident protocol above.
 
+The portable version of these rules, with every host name and product name stripped out, is the copilot's own skill: [`skills/confidential-data-handling/`](skills/confidential-data-handling/).
+
 ## The same pattern beyond the agent
 
 - Genome project: the copilot is architect-only; pipelines are designed and reviewed in the abstract, genotype values never enter the context (only `wc -l`, `grep -c`, checksums, `bcftools stats`).
