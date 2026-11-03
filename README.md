@@ -31,6 +31,7 @@ This setup allows me to disable internet for the LLM host (Spark). Just in case.
 - [`skills/`](skills/) - sanitized real skills: the local agent's [`food-log`](skills/food-log/) + the Android [`food-widget`](skills/food-widget/) pipeline, and the cloud copilot's [`confidential-data-handling`](skills/confidential-data-handling/) guardrails
 - [`benchmarks/`](benchmarks/) - model bake-offs run on the Spark
 - [`converters/`](converters/) - quantization helpers
+- [`qwopus_abliterated.md`](qwopus_abliterated.md) - abliterating Qwopus3.8-27B-Flash-V2: per-layer, projected refusal directions; no measurable loss on tool use or prompt-injection resistance
 - [`usecases/`](usecases/) - end-to-end examples (MRI analysis)
 - [`PRIVACY.md`](PRIVACY.md) - the data boundary between the cloud copilot and the local agent
 
