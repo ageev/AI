@@ -30,6 +30,7 @@
 - [`skills/`](skills/) - обезличенные боевые скиллы: у локального агента [`food-log`](skills/food-log/) + пайплайн Android-виджета [`food-widget`](skills/food-widget/), у облачного копилота [`confidential-data-handling`](skills/confidential-data-handling/) - его же гардрейлы; доки скиллов на английском - это язык рантайма агента
 - [`benchmarks/`](benchmarks/) - бейкоффы моделей на Spark
 - [`converters/`](converters/) - утилиты квантизации
+- [`deepseek-unlock/`](deepseek-unlock/) - сток и абляция DeepSeek-V4.1 на одной копии весов в oMLX: режим выбирается в каждом запросе именем `model`, сток бит в бит, 97% скорости; с кодом плагина (EN)
 - [`qwopus_abliterated.md`](qwopus_abliterated.md) - абляция Qwopus3.8-27B-Flash-V2: направления отказа по слоям с проекцией; без потерь на tool use и устойчивости к prompt injection (EN)
 - [`usecases/`](usecases/) - end-to-end примеры (разбор МРТ)
 - [`PRIVACY.ru.md`](PRIVACY.ru.md) - граница данных между облачным копилотом и локальным агентом
