@@ -2,6 +2,9 @@
 
 > **oMLX idea:** native per-request model variants, proposed upstream in
 > [jundot/omlx discussion #5650](https://github.com/jundot/omlx/discussions/5650).
+>
+> **Ready-made patch:** the directions and the profile used here, with install steps, are on
+> Hugging Face: [batsclamp/DeepSeek-V4.1-Flash-1017-unlocked-oMLX-patch](https://huggingface.co/batsclamp/DeepSeek-V4.1-Flash-1017-unlocked-oMLX-patch).
 
 **The task:** run the stock model and an abliterated variant side by side, from the same
 weights in memory, and switch between them per request. The client picks the mode through the
@@ -332,8 +335,10 @@ Greedy, no thinking, 768 tokens, 8 different prompts per measurement.
 - The medical direction was not evaluated on a medical benchmark; that it removes "see a
   doctor" hedging is by construction, not by measurement.
 - 6 reasoning loops in about 1400 generations, against 0 for stock.
-- The directions file is not published. The prompt sets for the medical direction are my
-  own and are not published either; AdvBench / Alpaca / StrongREJECT / XSTest are public.
+- The directions file and profile are published on
+  [Hugging Face](https://huggingface.co/batsclamp/DeepSeek-V4.1-Flash-1017-unlocked-oMLX-patch).
+  The prompt sets for the medical direction are my own and are not published;
+  AdvBench / Alpaca / StrongREJECT / XSTest are public.
 
 ## Code
 
