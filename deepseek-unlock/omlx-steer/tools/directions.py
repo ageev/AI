@@ -1,4 +1,4 @@
-"""Refusal and medical-caution directions from captured activations.
+"""Refusal and hedging directions from captured activations.
 
     directions.py CAPTURE_DIR OUT_DIR [--source block_mean] [--shift 0] [--layers 40] [--mtp 3]
 
@@ -6,12 +6,12 @@ Per layer l (recipe of the earlier Qwen abliterations):
   d_ref = sum over think/nothink of mean(harm) - mean(harmless) at the last
           gen-prompt token;
   biprojection: remove its component in span(harmless means of both modes);
-  d_med = same with med (advice requests) vs know (reference questions),
-          biprojected on the know means, then orthogonalised against r_ref.
+  d_hedge = same with advice requests vs reference questions, biprojected on
+          the reference means, then orthogonalised against r_ref.
 --shift -1 takes the direction from the output of the previous block (the
 residual the layer's writers read) instead of the layer's own output.
 
-Writes <source><shift>.both.npz (refusal + medical rows, the profile file) and
+Writes <source><shift>.both.npz (refusal + hedging rows, the profile file) and
 <source><shift>.ref.npz (refusal only, for sweeps), r: [layers + mtp, k, hidden]
 (MTP rows left zero; profiles use mtp "last"), and a stats JSON.
 """
@@ -57,14 +57,14 @@ def main():
     a = ap.parse_args()
 
     m = {}
-    for s in ("harm_train", "harmless_train", "med_train", "know_train"):
+    for s in ("harm_train", "harmless_train", "advice_train", "reference_train"):
         for mode in ("think", "nothink"):
             m[s, mode], n = load(a.capture, f"{s}.{mode}", a.source)
             print(f"{s}.{mode}: {n} prompts")
     L, D = a.layers, m["harm_train", "think"].shape[-1]
     ref = np.zeros((L, D))
     ref2 = np.zeros((L, D))  # span mode: second refusal vector
-    med = np.zeros((L, D))
+    hedge = np.zeros((L, D))
     stats = []
     for layer in range(L):
         src = layer + a.shift
@@ -80,23 +80,23 @@ def main():
             r, r2 = q2[:, 0], q2[:, 1]
         else:
             r, r2 = unit(biproject(dt + dn, hb)), None
-        mt = m["med_train", "think"][src] - m["know_train", "think"][src]
-        mn = m["med_train", "nothink"][src] - m["know_train", "nothink"][src]
-        q = biproject(mt + mn, [m["know_train", "think"][src], m["know_train", "nothink"][src]])
+        mt = m["advice_train", "think"][src] - m["reference_train", "think"][src]
+        mn = m["advice_train", "nothink"][src] - m["reference_train", "nothink"][src]
+        q = biproject(mt + mn, [m["reference_train", "think"][src], m["reference_train", "nothink"][src]])
         cos_raw = float(unit(q) @ unit(dt + dn))
         q = q - (q @ r) * r
         if r2 is not None:
             q = q - (q @ r2) * r2
             ref2[layer] = r2
         q = unit(q)
-        ref[layer], med[layer] = r, q
+        ref[layer], hedge[layer] = r, q
         stats.append({
             "layer": layer,
             "ref_think_rel": float(np.linalg.norm(dt) / h),
             "ref_nothink_rel": float(np.linalg.norm(dn) / h),
-            "med_rel": float(np.linalg.norm(mt + mn) / h),
+            "hedge_rel": float(np.linalg.norm(mt + mn) / h),
             "cos_think_nothink": float(unit(dt) @ unit(dn)),
-            "cos_ref_med": cos_raw,
+            "cos_ref_hedge": cos_raw,
         })
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -113,12 +113,12 @@ def main():
 
     refs = [ref] if a.mode == "sum" else [ref, ref2]
     save("ref", refs)
-    save("both", refs + [med])
+    save("both", refs + [hedge])
     (out / f"{name}.stats.json").write_text(json.dumps(stats, indent=1))
     for s in stats:
         if not s.get("skipped"):
             print(f"L{s['layer']:02d} |d_think|/|h|={s['ref_think_rel']:.3f} |d_nothink|/|h|={s['ref_nothink_rel']:.3f} "
-                  f"|d_med|/|h|={s['med_rel']:.3f} cos(think,nothink)={s['cos_think_nothink']:.2f} cos(ref,med)={s['cos_ref_med']:.2f}")
+                  f"|d_hedge|/|h|={s['hedge_rel']:.3f} cos(think,nothink)={s['cos_think_nothink']:.2f} cos(ref,hedge)={s['cos_ref_hedge']:.2f}")
 
 
 if __name__ == "__main__":

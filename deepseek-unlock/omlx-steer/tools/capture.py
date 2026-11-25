@@ -17,8 +17,8 @@ from pathlib import Path
 SETS = {
     "harm_train": ("prompts.json", "harm_train"),
     "harmless_train": ("prompts.json", "harmless_train"),
-    "med_train": ("med.json", "train"),
-    "know_train": ("know.json", "train"),
+    "advice_train": ("advice.json", "train"),
+    "reference_train": ("reference.json", "train"),
 }
 
 

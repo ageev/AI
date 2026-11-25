@@ -12,8 +12,8 @@ OpenAI `model` field (`deepseek` or `deepseek-unlocked`); nothing is reloaded, a
 can share one continuous batch.
 
 **Why:** a household agent should run on the stock model by default and switch to the
-unlocked mode on the fly when a question needs it (a frank medical answer, a topic the stock
-model hedges on), without a second model, a restart or a different endpoint. It also makes
+unlocked mode on the fly when a question needs it (a topic the stock model refuses or hedges
+on), without a second model, a restart or a different endpoint. It also makes
 abliteration experiments cheap: layer range and strength become request parameters instead
 of hours of re-quantisation.
 
@@ -73,8 +73,9 @@ writer per token, needs no re-quantised checkpoint, and - the point of the whole
 can be different for every row of a batch. `alpha = 0` means "this row is stock".
 
 `deepseek-unlocked` uses two directions per layer (`k = 2`): the general refusal direction
-and a "medical caution" direction (the urge to answer a treatment question with "see a
-doctor"). The second is orthogonalised against the first, so they are removed independently.
+and a hedging direction (answering an advice question with "ask a professional" instead of
+an answer). The second is orthogonalised against the first, so they are removed
+independently.
 
 ## DeepSeek-V4.1 specifics
 
@@ -172,7 +173,7 @@ inside the serving process: a hidden `deepseek-capture` profile records, per req
 layer outputs at the last prompt token and stops after one token.
 
 Prompts: 256 harmful + 256 harmless (AdvBench / Alpaca style, held-out splits for the sweep),
-228 "give me treatment advice" + 266 "reference question" for the medical direction, each in
+228 advice requests + 266 reference questions for the hedging direction, each in
 thinking and non-thinking mode: 2012 captures.
 
 Per layer:
@@ -180,8 +181,8 @@ Per layer:
 ```
 d_ref = (mean_harm - mean_harmless)[think] + (mean_harm - mean_harmless)[nothink]
 r_ref = unit( d_ref minus its projection on span(mean_harmless[think], mean_harmless[nothink]) )
-d_med = same with treatment vs reference prompts, projected off the reference means
-r_med = unit( d_med - (d_med . r_ref) r_ref )
+d_hedge = same with advice vs reference prompts, projected off the reference means
+r_hedge = unit( d_hedge - (d_hedge . r_ref) r_ref )
 ```
 
 The projection on the harmless means ("biprojection") is the refinement that kept
@@ -190,7 +191,7 @@ prompt-injection resistance intact in the Qwopus abliteration; it is kept here.
 How the direction grows through the model (`|d| / |h|` = direction length relative to the
 mean harmless activation):
 
-| Layer | refusal, thinking | refusal, no thinking | cos(think, no-think) | cos(refusal, medical) |
+| Layer | refusal, thinking | refusal, no thinking | cos(think, no-think) | cos(refusal, hedging) |
 |---:|---:|---:|---:|---:|
 | 8 | 0.24 | 0.25 | 0.50 | 0.11 |
 | 14 | 0.34 | 0.42 | 0.55 | 0.32 |
@@ -199,7 +200,7 @@ mean harmless activation):
 | 39 | 0.72 | 0.78 | 0.03 | 0.26 |
 
 Thinking and non-thinking refusal are only partly the same direction (cosine about 0.5), which
-is why both modes go into the sum. Refusal and medical caution are clearly different
+is why both modes go into the sum. Refusal and hedging are clearly different
 directions but not unrelated.
 
 **The off-by-one that cost a day.** The capture must be taken at the last prompt token. In
@@ -273,8 +274,8 @@ A dedicated sweep with 5 runs of TC-59 per candidate:
 |---|---:|---:|
 | production (8-39, alpha 1.25) | 0/5 | 3% |
 | 8-39, alpha 1.0 | 0/5 | 11% |
-| refusal direction only, no medical | 0/5 | - |
-| medical direction only | 5/5 | - |
+| refusal direction only | 0/5 | - |
+| hedging direction only | 5/5 | - |
 | layers 14-19 weakened to alpha 0.5 | 1/5 | 17% |
 | 8-19 at 0.75, 20-39 at 1.25 | 3/5 | 23% |
 | 8-39, alpha 0.75 | 4/5 | 62% |
@@ -332,12 +333,10 @@ Greedy, no thinking, 768 tokens, 8 different prompts per measurement.
 
 - oMLX 0.8.3 and the DeepSeek-V4.1 architecture only. Another architecture needs its own
   adapter (where the writers are, how the forward paths are organised).
-- The medical direction was not evaluated on a medical benchmark; that it removes "see a
-  doctor" hedging is by construction, not by measurement.
 - 6 reasoning loops in about 1400 generations, against 0 for stock.
 - The directions file and profile are published on
   [Hugging Face](https://huggingface.co/batsclamp/DeepSeek-V4.1-Flash-1017-unlocked-oMLX-patch).
-  The prompt sets for the medical direction are my own and are not published;
+  The advice / reference prompt sets are my own and are not published;
   AdvBench / Alpaca / StrongREJECT / XSTest are public.
 
 ## Code
