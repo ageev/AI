@@ -1,5 +1,8 @@
 # DeepSeek-V4.1 unlocked: stock and abliterated modes on one copy of the weights
 
+> **oMLX idea:** native per-request model variants, proposed upstream in
+> [jundot/omlx discussion #5650](https://github.com/jundot/omlx/discussions/5650).
+
 **The task:** run the stock model and an abliterated variant side by side, from the same
 weights in memory, and switch between them per request. The client picks the mode through the
 OpenAI `model` field (`deepseek` or `deepseek-unlocked`); nothing is reloaded, and both modes
