@@ -1,25 +1,14 @@
 EN | [RU](README.ru.md)
 
 # About
-My current AI setup:
-- Asus GB10 box as the main LLM carrier
-- Chinese Intel N95 tiny PC where the Hermes agent lives
-- Synology NAS as a docker station and storage
-- Macbook as a daily driver
 
-This setup allows me to disable internet for the LLM host (Spark). Just in case.
 
 # TL;DR
-1. Claude Code makes local AI shine:
-  - sets up and manages the environment: software installs, issue debugging etc.
-  - **secrets never leave the LAN**: local Vaultwarden has a dedicated Organization where the bots store their secrets (and Claude never reads them into its context!)
-  - writes skills for the Hermes agent and helps him when he struggles.
-  - Claude has strict guardrails set to never read anything private/confidential and to immediately report incidents (we had a few minor ones - see [PRIVACY.md](PRIVACY.md)).
-2. Local AI *almost* all the time loses to frontier cloud models. Often even the best local LLMs fail basic tasks. BUT this scheme, where Claude is the untrusted brain and the local LLM is a (dumb) trusted worker, is surprisingly effective!
-3. Speculative Decoding (MTP, DFlash, etc.) sucks. It boosts TPS (tokens-per-second) and works fine for plain text generation and coding, but completely fails you on many real-life agentic tasks - see the [failure log](spark/README.md#speculative-decoding-on-gb10-the-failure-log).
-4. The Hermes agent works great via Telegram and lets all family members feel the power of local (trusted) AI.
+1. DeepSeek is smart enough to replace Claude Code for 90% of tasks.
+2. Local LLMs are not about ROI, rather than freedom to do what you want and peace of mind (no thoughts like "what will I do if Anthropic will disable X feature tomorrow).
 
 ## Most used LLM usecases:
+- go here and do that, use camofox with cloudflare bypass services if my residential IP is not enough. Did you know that Claude Code can't read Reddit (and 100+ more sites from Alexa TOP500 BTW...)? Now you do. 
 - **food calorie intake monitoring** - I send a photo of my lunch to Hermes, he tracks proteins and calories; I see the current counters on my Android widget. Result: minus 5 kilos in 2 months! Sanitized sources: the skill [`skills/food-log/`](skills/food-log/) and the widget pipeline [`skills/food-widget/`](skills/food-widget/).
 - **sport activities monitoring** - I collect 120+ health/sleep/sport parameters via Garmin watches into my Home Assistant. After an activity is done, I get a full report in my Telegram chat. This has already helped me improve my running significantly! Feels like a private coach.
 - **private doctor** - Hermes has access to my blood tests, sleep data and DNA.
@@ -37,12 +26,13 @@ This setup allows me to disable internet for the LLM host (Spark). Just in case.
 - [`PRIVACY.md`](PRIVACY.md) - the data boundary between the cloud copilot and the local agent
 
 # Hardware
-
-Asus Aspire GX10 (DGX Spark / GB10 clone), running mostly headless now - details, OOM/swap notes and fixes in [`spark/`](spark/).
+- MacStudio M5 Ultra with 512Gb. It allows me to run DeepSeek v4.1 1017 which is an "Opus-like" model and a series step up after Qwen3.8. 
+- Asus Aspire GX10 (DGX Spark / GB10 clone), running mostly headless now - details, OOM/swap notes and fixes in [`spark/`](spark/). Spark has CUDA -> image and video generations are way way easier than on Mac. 
 
 # LLMs
 
-## Current pick (since 2026-07-18): Step-3.7-Flash
+## Current pick (since 2026-11-25): DeepSeek v4.1 1017 on Mac. Minimax H3 Image and Video on Spark. 
+## Old pick (since 2026-07-18): Step-3.7-Flash
 
 [`stepfun-ai/Step-3.7-Flash`](https://huggingface.co/stepfun-ai/Step-3.7-Flash-GGUF) - 196B MoE, 11B active, native vision. Served as GGUF IQ4_XS (~98 GiB) via llama.cpp in docker: ctx 262144, 2 parallel slots, KV cache q4_0, ~28 tok/s warm decode on the GB10.
 
