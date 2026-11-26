@@ -120,10 +120,16 @@ def uid_scope(model, uids, phase: Optional[str] = None):
 
 
 def resolve_draft(n_rows: int, cache) -> tuple:
-    """Row profiles of a DSpark stage forward; ``cache`` is that stage's cache."""
+    """Row profiles of a DSpark stage forward.
+
+    ``cache`` is that stage's cache, or one cache per row when several
+    requests draft in one pass (``dspark_hidden_rows``).
+    """
     mapping = DRAFT_CACHES.get()
-    if mapping and n_rows == 1 and id(cache) in mapping:
-        return (mapping[id(cache)],)
+    if mapping:
+        items = list(cache) if isinstance(cache, (list, tuple)) else [cache]
+        if len(items) == n_rows and all(id(item) in mapping for item in items):
+            return tuple(mapping[id(item)] for item in items)
     return resolve(n_rows, draft=True)
 
 

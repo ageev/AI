@@ -19,7 +19,7 @@ request parameters instead of hours of re-quantisation).
 
 ## Reference implementation
 
-[omlx-steer](https://github.com/ageev/AI/tree/main/deepseek-unlock/omlx-steer) is an out-of-tree plugin for oMLX 0.8.3 with an adapter for
+[omlx-steer](https://github.com/ageev/AI/tree/main/deepseek-unlock/omlx-steer) is an out-of-tree plugin for oMLX 0.8.4 (first written for 0.8.3) with an adapter for
 DeepSeek-V4.1. It patches at import time and pins the source of every
 upstream function it relies on, so it disables itself (503 on the virtual ids)
 when oMLX changes. It is meant to show the integration points, not as the

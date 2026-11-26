@@ -6,7 +6,7 @@ that ``hc_post`` adds into all four streams with weights ``post_j``. Projecting
 that vector before ``hc_post`` is exactly equivalent to orthogonalising the
 writer's output weights, independent of the stream mixing.
 
-Hook points (oMLX 0.8.3, ``omlx/patches/deepseek_v41``):
+Hook points (oMLX 0.8.4, ``omlx/patches/deepseek_v41``):
   * ``Block.sum_ranks`` - every path (generic, fused decode, batched decode,
     MTP verify) passes the attention output and the MoE output through it,
     in that order, right before they enter the streams.
@@ -306,7 +306,7 @@ def install(modules) -> None:
 
 
 def _make_engram_call(engram_mod):
-    """Engram.__call__ of oMLX 0.8.3 with ``value`` passed through ``proj``."""
+    """Engram.__call__ of oMLX 0.8.4 (same as 0.8.3) with ``value`` passed through ``proj``."""
     import math
 
     import numpy as np

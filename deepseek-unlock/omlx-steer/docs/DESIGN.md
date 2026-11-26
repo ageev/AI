@@ -48,7 +48,8 @@ A forward's rows come from a scope listing one profile (or `None`) per row.
 * A mixed scope whose length does not match the forward's rows raises
   `_MtpStepFallback`, so the MTP step falls back to the standard step; it
   never silently runs stock. DSpark drafts of shared draft jobs are matched to
-  their request through the request's own draft cache.
+  their request through the request's own draft cache; since oMLX 0.8.4 several
+  requests draft in one pass and each row is matched through its own cache.
 
 oMLX itself is not batch-invariant (a request alone and in a batch can differ
 slightly), so isolation is defined against a batch of the same composition.
@@ -62,7 +63,7 @@ VLM image hashes, so prefix cache, paged SSD cache, boundary snapshots and MTP
 priming sidecars are all keyed by it. Stock requests produce exactly the keys
 they produced before.
 
-## Hook points (DeepSeek-V4.1, oMLX 0.8.3)
+## Hook points (DeepSeek-V4.1, oMLX 0.8.4)
 
 The residual is `hc_mult = 4` hyper-connection streams. Each writer produces
 one `[dim]` vector per token and `hc_post` adds `post_j * x` to stream `j`;

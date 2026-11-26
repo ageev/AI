@@ -23,7 +23,7 @@ from pathlib import Path
 __version__ = "0.1.0"
 logger = logging.getLogger("omlx_steer")
 
-SUPPORTED_OMLX = ("0.8.3",)
+SUPPORTED_OMLX = ("0.8.4",)
 PINS_FILE = Path(os.environ.get("OMLX_STEER_PINS") or Path(__file__).with_name("pins.json"))
 
 

@@ -10,13 +10,15 @@
 * Steered responses carry ``X-Omlx-Steer: <alias>@<sha>``.
 * An alias whose adapter is not ready answers 503 (oMLX's ``model_fallback``
   would otherwise silently serve the stock model under the alias name).
-* ``GET /v1/models`` lists the aliases.
+* ``GET /v1/models`` lists the aliases; ``GET /v1/models/{alias}`` answers
+  with the base model's entry under the alias id.
 """
 
 from __future__ import annotations
 
 import json
 import logging
+from urllib.parse import quote, unquote
 
 from . import rows as R
 from .profiles import ProfileError
@@ -29,6 +31,7 @@ _POST_PATHS = (
     "/v1/messages",
     "/v1/responses",
 )
+_MODEL_PREFIX = "/v1/models/"
 
 
 class SteerMiddleware:
@@ -43,6 +46,8 @@ class SteerMiddleware:
         method = scope.get("method", "")
         if method == "GET" and path == "/v1/models":
             return await self._models(scope, receive, send)
+        if method == "GET" and path.startswith(_MODEL_PREFIX):
+            return await self._model(scope, receive, send, unquote(path[len(_MODEL_PREFIX):]))
         if method == "GET" and path == "/v1/omlx-steer/status":
             return await _json(send, 200, self.state.status())
         if method == "POST" and path in _POST_PATHS:
@@ -113,6 +118,40 @@ class SteerMiddleware:
                     await self._finish_models(send, start, b"".join(parts))
 
         await self.app(scope, receive, capture)
+
+    # -- GET /v1/models/{id} -----------------------------------------------
+    async def _model(self, scope, receive, send, model):
+        raw = self.state.store.aliases().get(model)
+        if raw is None or not raw.get("listed", True):
+            return await self.app(scope, receive, send)
+        if not self.state.ready(raw.get("model_type")):
+            return await _error(send, 503, f"steering model '{model}' is not available: {self.state.reason}")
+        path = _MODEL_PREFIX + raw["base_model"]
+        scope = dict(scope, path=path, raw_path=quote(path).encode())
+        start, parts = {}, []
+
+        async def capture(message):
+            if message["type"] == "http.response.start":
+                start.update(message)
+            elif message["type"] == "http.response.body":
+                parts.append(message.get("body", b""))
+                if not message.get("more_body", False):
+                    await self._finish_model(send, start, b"".join(parts), model)
+
+        await self.app(scope, receive, capture)
+
+    async def _finish_model(self, send, start, body, alias):
+        status = start.get("status", 200)
+        try:
+            data = json.loads(body) if status == 200 else None
+        except ValueError:
+            data = None
+        if isinstance(data, dict):
+            body = json.dumps(dict(data, id=alias)).encode()
+        headers = [(k, v) for k, v in start.get("headers", []) if k.lower() != b"content-length"]
+        headers.append((b"content-length", str(len(body)).encode()))
+        await send(dict(start, headers=headers))
+        await send({"type": "http.response.body", "body": body, "more_body": False})
 
     async def _finish_models(self, send, start, body):
         status = start.get("status", 200)

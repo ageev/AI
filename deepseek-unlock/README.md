@@ -17,9 +17,10 @@ on), without a second model, a restart or a different endpoint. It also makes
 abliteration experiments cheap: layer range and strength become request parameters instead
 of hours of re-quantisation.
 
-**Tested on:** DeepSeek-V4.1-Flash (oQ4e, MTP) in [oMLX](https://github.com/jundot/omlx) 0.8.3
+**Tested on:** DeepSeek-V4.1-Flash (oQ4e, MTP) in [oMLX](https://github.com/jundot/omlx) 0.8.3 (evaluation)
 on a Mac Studio M5 Ultra with 512 GB of unified memory. The checkpoint is about 400 GB, so a
-second copy does not fit.
+second copy does not fit. The plugin now targets oMLX 0.8.4 (ported 2026-11-26: stock still bit-identical
+on the test checkpoint, unlocked at stock speed).
 
 | | `deepseek` (stock) | `deepseek-unlocked` |
 |---|---:|---:|
@@ -331,7 +332,7 @@ Greedy, no thinking, 768 tokens, 8 different prompts per measurement.
 
 ## Caveats
 
-- oMLX 0.8.3 and the DeepSeek-V4.1 architecture only. Another architecture needs its own
+- oMLX 0.8.4 (the version the plugin is pinned to) and the DeepSeek-V4.1 architecture only. Another architecture needs its own
   adapter (where the writers are, how the forward paths are organised).
 - 6 reasoning loops in about 1400 generations, against 0 for stock.
 - The directions file and profile are published on

@@ -9,7 +9,7 @@ runtime (directional ablation, Arditi et al. 2024). It is exactly equivalent
 to orthogonalising the writer weights, but needs no re-quantised checkpoint,
 no reload, and can differ between rows of the same continuous batch.
 
-Status: works with oMLX 0.8.3 and the DeepSeek-V4.1 model family
+Status: works with oMLX 0.8.4 (ported from 0.8.3 on 2026-11-26) and the DeepSeek-V4.1 model family
 (hyper-connections, Engram, DSpark MTP). Other architectures need an adapter.
 
 ## Guarantees

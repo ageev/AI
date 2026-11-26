@@ -18,19 +18,19 @@
  "omlx.patches.deepseek_v41.language": {
   "Block.__call__": "8e59a00ee04000b2040086d482af301c56629eed892e46bea9eababefc344092",
   "Block.sum_ranks": "765cbbce93c8c5af0cab50f3ae9063f3af0732c0661de2438ef02a834350f827",
-  "LanguageModel._forward": "62930885111bc2dd485fa9570c614eb89e84206d1981c177a97fd5b883def1c9",
+  "LanguageModel._forward": "b48fca3976fdd6bf7a0473fe9b4bbd2e2102da91a52320f9765f0475cb9100a4",
   "LanguageModel._forward_decode_batched": "e8bc297fef53f6e67dbcd14de258ca1fa2a143e2adf715ea59d676922444aa04",
   "LanguageModel._forward_verify_batched": "62d7b228c9d1d73928e70aee26acebaa0df6eb1723617338d05f0dcb5aea609f",
   "hc_post": "aa7c89ed508d70614f15da127e22a2e9e68be4b1cdc3636c62d78329dd3d863a"
  },
  "omlx.patches.mlx_lm_mtp.batch_generator": {
-  "_dspark_draft_jobs": "1d0689ffcc5c5a79757b082aa804e73df00a610a32f21025c58a0b4b816d427f",
+  "_dspark_draft_jobs": "6c23886517f856c3d717791c36f6275b9a5a6389a44d6b84979e4127ad6a8ec7",
   "_make_row_batch": "c5792dd5bbd2ade963a089cf13483c6fdf5f47bbe649f4abc4707ad4523cb7c7",
-  "apply": "30f44a166072001a045d9df95487122b894360daf201386e3ab7abe14768241d"
+  "apply": "536ca26ed0c0afdf5d0646fa50b9d521370d7d8650900b2bda6dd96200fecf5c"
  },
  "omlx.patches.mlx_lm_mtp.fused_batch": {
   "_advance_group": "56c48a69b80131ab76b5ad5558f7440b5b76f7692f41515a52cd000abca5bd59",
-  "_verify_rows_together": "e8403a53fbf647d53f1bbac78a4defc4e675b225591e195d230c4b74e8b5d60b"
+  "_verify_rows_together": "8388d2bf5149cf31ce0efc4c7f586abfe6570c356de3b03a38d306fcf5a3125f"
  },
  "omlx.patches.mlx_lm_mtp.prompt_priming": {
   "bind_uid": "a62f5961ad0e120525d74bb8ce1e053c095603ec537637478b6007184bacdcaf"
@@ -44,8 +44,8 @@
   "Scheduler._do_external_prefill": "61b63766e9b948fa1af8f6550a0869cda1cf628d104ebcdd3f882668beceb5b4",
   "Scheduler._forward_packed_prefill": "173d9860523cffb2b41db24c51e10f1eaddf2a0bf87717e4ca4b7dda2cebf5bb",
   "Scheduler._forward_prefill_chunk": "2d4449d03fa2c4b85053852da34f621c109f3ecbc21d6f1009f493fa20c24aae",
-  "Scheduler._insert_prefilled_request": "ce1c8347503f5c963d9c0204a9368089799714699eb243ac7df3779f1634ca7d",
-  "Scheduler._schedule_waiting": "624f59c1ee6a55bda36c8a36e38dff9886b6442dd3126dc15b41058480b87750",
+  "Scheduler._insert_prefilled_request": "420152381a3bedb72709e689b3d41675cd6aa2eba7acf3dd31ff1e0f0678ca4d",
+  "Scheduler._schedule_waiting": "a6b8207c48c65a55669487fc1cde4ad6965a3a09a0d248476e63a3781f7c3578",
   "_patched_ppb_prompt": "8735ccc298a2bcc404b5af593bbd27723ee7060307f9adc5e28a005c959701fb",
   "_unregister_uid_row": "8df7354aafbb9ddc11df440016f4e8b70d9565f4987c43787e83266b1cd19a67",
   "_unregister_uid_rows_for_model": "9f27d6c9d42be7a4f27649ec0bf4f4e3bb52e2d4d936ef1b9979483016c12bc7"

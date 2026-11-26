@@ -74,6 +74,10 @@ log_start = LOG.stat().st_size
 _, _, models = call("/v1/models")
 ids = [m["id"] for m in models.get("data", [])]
 check("models lists aliases", {"tiny-steer", "tiny-zero"} <= set(ids), ids)
+code, _, one = call("/v1/models/tiny-steer")
+_, _, base_one = call(f"/v1/models/{BASE}")
+check("model lookup by alias", code == 200 and dict(one, created=0) == dict(base_one, id="tiny-steer", created=0),
+      (code, one))
 _, _, status = call("/v1/omlx-steer/status")
 check("status ready", all(a["ready"] for a in status["aliases"].values()), status["aliases"])
 
